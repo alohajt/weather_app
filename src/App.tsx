@@ -1,15 +1,21 @@
 import React, { EventHandler, useEffect, useState } from "react";
 import { type WeatherData } from "./service/weather-data";
+import CssBaseline from '@mui/material/CssBaseline';
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 
 const App = () => {
 
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [cityName, setCityName] = useState<string>("");
+
+  // const [cityName, setCityName] = useState<string>("");
+
 
   const fetchData = async (city: string) => {
     try {
@@ -45,42 +51,58 @@ const App = () => {
   }
 
   console.log("weatherData.weather[0].main", weatherData);
-  // const temp = (weatherData.main && weatherData.main.temp) − 273.15
-  if (weatherData.main && weatherData.main.temp) {
-    const temp = Math.ceil(weatherData.main.temp - 273.15)
-    console.log("temp", temp);
+
+  const convertTemp = (temp: number) => {
+    return Math.ceil(temp - 273.15)
   }
 
   const image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQst8vcOxn0BCuQLyVoSdCrNlEuTwJskeJzbQ&usqp=CAU"
   const styles = {
     paperContainer: {
-        backgroundImage: `url(${image})`
+      backgroundImage: `url(${image})`,
+      backgroundRepeat: "no-repeat",
+      
     }
-};
+  };
 
   return (
-    <div>
-      <Paper 
-      style={styles.paperContainer}>
-        <Typography variant="h2" component="h2" align="center">
-          {weatherData.name}
-        </Typography>
+    <>
+      <CssBaseline />
+      <Box
+        style={styles.paperContainer}
+      >
+        <Grid container spacing={2} direction="column" alignItems="center">
+          <Grid item xs={12}>
+            <Typography variant="h2" component="h2">
+              {weatherData.name}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <form onSubmit={handleSubmit}>
+              <input type="text" value={cityName} onChange={handleTextChange} />
+              <input type="submit" value="Submit" />
+            </form>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h2" component="h2">
+              Temp: {weatherData.main && convertTemp(weatherData.main.temp)} C
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" component="h3">
+              {weatherData.weather && weatherData.weather[0].description}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" component="h3">
+              Max Temp:{weatherData.main && convertTemp(weatherData.main.temp_max)} C <br />
+              Min Temp: {weatherData.main && convertTemp(weatherData.main.temp_min)} C
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
 
-        <form onSubmit={handleSubmit}>
-          <input type="text" value={cityName} onChange={handleTextChange} />
-          <input type="submit" value="Submit" />
-        </form>
-
-        {/* <h2>Temp: {temp} C</h2>       */}
-        <Typography variant="body1" component="h3" align="center">
-          {weatherData.weather && weatherData.weather[0].description}
-        </Typography>
-        <Typography variant="body1" component="h3" align="center">
-          Max Temp:{weatherData.main && weatherData.main.temp_max} K <br />
-          Min Temp: {weatherData.main && weatherData.main.temp_min} K
-        </Typography>
-      </Paper>
-    </div>
+    </>
   );
 
 };
