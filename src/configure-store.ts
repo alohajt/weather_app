@@ -6,7 +6,7 @@ import monitorReducersEnhancer from './enhancers/monitor-reducer'
 import loggerMiddleware from './middleware/logger'
 import rootReducer from './reducers'
 
-export default function configureStore(preloadedState: {}) {
+export default function configureStore() {
   const customizedMiddleware = getDefaultMiddleware({
     serializableCheck: false
   })
@@ -16,7 +16,7 @@ export default function configureStore(preloadedState: {}) {
   const enhancers = [middlewareEnhancer, monitorReducersEnhancer]
   const composedEnhancers = compose<any>(...enhancers)
 
-  const store = createStore(rootReducer, preloadedState, composedEnhancers)
+  const store = createStore(rootReducer, undefined, composedEnhancers);
 
   return store
 }

@@ -1,10 +1,8 @@
-import { combineReducers } from 'redux'
-import cityReducer from './city-reducer'
-import weatherReducer from './weather-reducer'
+import { combineReducers } from 'redux';
+import cityReducer from './city';
+import weatherReducer from './weather';
 
 
 // Use the initialState as a default value
-export default function rootReducer(state = {}, action: any) {
-    return combineReducers({ city: cityReducer, weather: weatherReducer })
-}
+export default combineReducers({ city: cityReducer, weather: weatherReducer });
 

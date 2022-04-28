@@ -3,7 +3,6 @@ import { type WeatherData } from "../service/weather-data";
 import CssBaseline from '@mui/material/CssBaseline';
 
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -23,9 +22,10 @@ const App = () => {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=313df0952d0a44e38ca0118cca3f0863`;
       const response = await fetch(url);
       const json = await response.json();
-      console.log(json);
-      // setWeatherData(json);
-      dispatch({type:'GET_WEATHER_SUCCESS',payload:json.main })
+      dispatch({
+        type: 'GET_WEATHER_SUCCESS',
+        payload: json,
+      })
     } catch (error) {
       console.log("error", error);
     }
