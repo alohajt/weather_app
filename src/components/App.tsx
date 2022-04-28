@@ -1,33 +1,26 @@
-import React, { EventHandler, useEffect, useState } from "react";
-import { type WeatherData } from "../service/weather-data";
+import React, { useEffect, useState } from "react";
 import CssBaseline from '@mui/material/CssBaseline';
-
 import Box from '@mui/material/Box';
-
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from '../store'
+import { getWeatherError, getWeatherRequest, getWeatherSuccess } from "../slices/weather";
 
 const App = () => {
-
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [cityName, setCityName] = useState<string>("");
-
-  // const [cityName, setCityName] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>()
   const fetchData = async (city: string) => {
     try {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=313df0952d0a44e38ca0118cca3f0863`;
+      dispatch(getWeatherRequest());
       const response = await fetch(url);
       const json = await response.json();
-      dispatch({
-        type: 'GET_WEATHER_SUCCESS',
-        payload: json,
-      })
+      
+      dispatch(getWeatherSuccess(json));
     } catch (error) {
-      console.log("error", error);
+      dispatch(getWeatherError(error));
     }
   };
 
@@ -45,13 +38,16 @@ const App = () => {
     event.preventDefault();
   }
 
-  if (!weatherData) {
-    return <div>
-      loading
-    </div>
+  const isLoading = useSelector((state: RootState) => state.weather.loading)
+  const weatherData = useSelector((state: RootState) => state.weather.data);
+
+  if (isLoading) {
+    return <div>loading</div>
   }
 
-  console.log("weatherData.weather[0].main", weatherData);
+  if (!weatherData) {
+    return null;
+  }
 
   const convertTemp = (temp: number) => {
     return Math.ceil(temp - 273.15)
